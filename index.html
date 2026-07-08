@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상호문화 감수성 자가진단 (ISS · CQS)</title>
+<style>
+:root{--indigo:#23456E;--deep:#152A45;--soft:#E8EDF4;--paper:#FBFAF5;--ink:#22303C;--muted:#6B7480;--line:#DAD6CB;--verm:#AE4A2F;--vsoft:#F7EFEA;--green:#3F6B4F;--gsoft:#EDF2EC;--amber:#8A6A1F}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:var(--paper);color:var(--ink);line-height:1.65;font-size:15px}
+.wrap{max-width:640px;margin:0 auto;padding:22px 16px 90px}
+h1{font-size:21px;color:var(--deep);line-height:1.4;margin:14px 0 4px;font-weight:800}
+.sub{font-size:13px;color:var(--muted);margin-bottom:14px}
+.notice{background:var(--soft);border-left:4px solid var(--indigo);padding:10px 14px;font-size:13px;margin-bottom:16px}
+.sec{background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px;margin:14px 0}
+.sec h2{font-size:16px;color:var(--indigo);margin-bottom:4px}
+.sec .d{font-size:12.5px;color:var(--muted);margin-bottom:10px}
+.q{border-top:1px solid #EFECE3;padding:11px 0 9px}
+.q .qt{font-size:14px;margin-bottom:7px}
+.q .qt .rv{color:var(--verm);font-size:11px;font-weight:700;margin-left:4px}
+.opts{display:flex;gap:4px}
+.opts label{flex:1;text-align:center;font-size:12px;color:var(--muted);cursor:pointer;border:1.5px solid var(--line);border-radius:6px;padding:7px 2px;user-select:none}
+.opts input{display:none}
+.opts input:checked+span{display:block;background:var(--indigo);color:#fff;border-radius:4px;margin:-7px -2px;padding:7px 2px}
+button{width:100%;background:var(--indigo);color:#fff;border:0;border-radius:8px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;margin-top:10px;font-family:inherit}
+button:disabled{background:#B9BDB4}
+.prog{position:sticky;top:0;background:var(--paper);padding:8px 0;z-index:5;font-size:12.5px;color:var(--muted)}
+.bar{height:6px;background:#E7E4DA;border-radius:3px;overflow:hidden;margin-top:4px}
+.bar>div{height:100%;background:var(--indigo);width:0%}
+/* results */
+#result{display:none}
+.rcard{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px;margin:14px 0}
+.rcard h2{font-size:17px;color:var(--deep);margin-bottom:8px}
+.big{font-size:34px;font-weight:800;color:var(--indigo)}
+.grade{display:inline-block;font-size:13px;font-weight:700;padding:3px 12px;border-radius:20px;margin-left:8px;vertical-align:8px}
+.fb{margin:8px 0}
+.fb .fl{display:flex;justify-content:space-between;font-size:13px;margin-bottom:2px}
+.fb .tr{height:14px;background:#EFECE3;border-radius:7px;overflow:hidden}
+.fb .fi{height:100%;background:var(--indigo);border-radius:7px}
+.fb.cq .fi{background:var(--green)}
+.expl{font-size:13.5px;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:11px 13px;margin-top:10px}
+.quad{font-size:14px;background:var(--vsoft);border-left:4px solid var(--verm);padding:11px 14px;margin-top:8px}
+.code{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:var(--deep);color:#DCE5F0;padding:12px;border-radius:8px;word-break:break-all;margin-top:8px}
+.copybtn{background:var(--verm)}
+.small{font-size:11.5px;color:var(--muted);margin-top:10px}
+.err{color:var(--verm);font-size:13px;font-weight:700;margin-top:8px;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>상호문화 감수성 자가진단</h1>
+<p class="sub">교사용 번안 · ISS(24문항, 5점) + 문화지능 CQS(20문항, 7점) · 소요 약 6분</p>
+<div class="notice">이 진단은 <b>시험이 아니라 거울</b>입니다. 응답과 결과는 이 화면(브라우저) 안에서만 계산되며 <b>어디에도 저장·전송되지 않습니다.</b> 마지막의 '결과 코드'만 안내에 따라 익명으로 제출해 주세요.</div>
+
+<div class="prog"><span id="ptxt">응답 0 / 44</span><div class="bar"><div id="pbar"></div></div></div>
+
+<form id="f">
+<div class="sec">
+  <h2>제1척도 · ISS (문항 1–24)</h2>
+  <p class="d">각 문장이 나에게 해당하는 정도를 고르세요. <b>1 전혀 그렇지 않다 · 2 그렇지 않다 · 3 보통 · 4 그렇다 · 5 매우 그렇다</b><br>모든 문항은 <b>교사용 번안</b>으로, 상호작용 대상을 이주배경 학생·학부모(수업·상담·면담 장면)로 특정했습니다.</p>
+  <div id="issItems"></div>
+</div>
+<div class="sec">
+  <h2>제2척도 · CQS 문화지능 (문항 25–44)</h2>
+  <p class="d"><b>1 전혀 그렇지 않다 ~ 7 매우 그렇다</b>의 7점으로 응답하세요.</p>
+  <div id="cqItems"></div>
+</div>
+<p class="err" id="err">아직 응답하지 않은 문항이 있습니다. 위로 올라가 빨간 테두리 문항을 확인하세요.</p>
+<button type="button" onclick="score()">결과 보기</button>
+</form>
+
+<div id="result">
+  <div class="rcard">
+    <h2>척도 ① ISS — 상호문화 감수성</h2>
+    <div><span class="big" id="issM"></span><span style="font-size:14px;color:var(--muted)"> / 5.00</span><span class="grade" id="issG"></span></div>
+    <div id="issBars" style="margin-top:12px"></div>
+    <div class="expl" id="issExpl"></div>
+  </div>
+  <div class="rcard">
+    <h2>척도 ② CQS — 문화지능</h2>
+    <div><span class="big" id="cqM" style="color:var(--green)"></span><span style="font-size:14px;color:var(--muted)"> / 7.00</span><span class="grade" id="cqG"></span></div>
+    <div id="cqBars" style="margin-top:12px"></div>
+    <div class="expl" id="cqExpl"></div>
+  </div>
+  <div class="rcard">
+    <h2>나의 좌표 사분면</h2>
+    <div class="quad" id="quad"></div>
+  </div>
+  <div class="rcard">
+    <h2>결과 코드 제출 — 이 화면에서 바로</h2>
+    <p style="font-size:13.5px">나의 결과 코드(요인 평균만 담김 · 개인 정보 없음):</p>
+    <div class="code" id="code"></div>
+    <p id="copied" style="display:none;font-size:13.5px;color:var(--green);font-weight:700;margin-top:6px">✔ 코드가 복사되었습니다 — 아래 답란을 길게 눌러 붙여넣고 [제출]을 누르세요.</p>
+    <button class="copybtn" type="button" onclick="copyCode()">코드 복사가 안 되었다면 여기를 누르세요</button>
+    <div style="margin-top:14px;border:1.5px solid var(--line);border-radius:10px;overflow:hidden">
+      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSeHL9eZhamrKO7Phl5NO7vPyDKvIOxUxzgC7DKLPxoU2bumzA/viewform?embedded=true" width="100%" height="480" frameborder="0" marginheight="0" marginwidth="0" title="결과 수합 폼">불러오는 중…</iframe>
+    </div>
+    <button type="button" id="submitBtn" style="display:none;background:var(--green)" onclick="submitCode()">폼이 안 보이면 새 창으로 열기</button>
+    <p class="small">해석 유의: 자기보고 점수는 자기 지각을 반영하며 발달 단계의 직접 증거가 아닙니다. 등급은 성찰의 출발점으로만 사용하세요.<br>출처: Chen &amp; Starosta(2000) ISS · Ang et al.(2007) CQS — 교직 맥락(이주배경 학생·학부모)으로 특정한 교사용 번안본. 요인 구조·채점 방식은 원척도를 따름.</p>
+  </div>
+</div>
+</div>
+
+<script>
+// ===== 강의자 설정 (여기 두 줄만 수정) ==========================================
+// 구글폼 익명 수합을 쓰려면: 폼의 '미리 채워진 링크'를 만들어 아래에 넣으세요.
+//  ① 구글폼 생성(주관식 1문항, 이메일 수집 안 함) → 우상단 ⋮ → '미리 채워진 링크 가져오기'
+//  ② 답란에 CODE 라고 입력 후 '링크 가져오기' → 복사된 주소를 통째로 붙여넣기
+//  예: const SUBMIT_URL="https://docs.google.com/forms/d/e/xxxx/viewform?usp=pp_url&entry.123456=CODE";
+// URL에 CODE 자리가 없으면(일반 폼 주소) → 버튼이 코드를 자동 복사한 뒤 폼을 열어 줍니다(붙여넣기만 하면 됨).
+// 비워 두면("") 제출 버튼 없이 '코드 복사'만 표시됩니다.
+const SUBMIT_URL="https://forms.gle/2sBDToJKNdt5PeH5A";
+// ==============================================================================
+
+// ISS 24 items (연수용 번안). r=역채점, f=요인(0참여,1존중,2자신감,3향유,4주의)
+const ISS=[
+ {t:"나는 이주배경 학생·학부모와 상호작용하는 것을 즐긴다.",f:0},
+ {t:"문화적 배경이 다른 학생·학부모는 사고방식이 좁다고 느낄 때가 있다.",f:1,r:1},
+ {t:"이주배경 학생이나 학부모와 대화할 때 꽤 자신이 있다.",f:2},
+ {t:"이주배경 학부모 앞에서(상담·면담 등) 이야기하는 것이 매우 어렵다.",f:2,r:1},
+ {t:"이주배경 학생·학부모와 대화할 때 무슨 말을 해야 할지 대체로 알고 있다.",f:2},
+ {t:"이주배경 학생·학부모와의 상호작용에서도 원하는 만큼 사교적으로 대할 수 있다.",f:2},
+ {t:"학생들의 출신 문화가 지닌 가치관이 마음에 들지 않는다.",f:1,r:1},
+ {t:"문화적 배경이 다른 학생·학부모의 가치관을 존중한다.",f:1},
+ {t:"이주배경 학생·학부모와 상호작용할 때 쉽게 기분이 상한다.",f:3,r:1},
+ {t:"이주배경 학생·학부모와 함께 있어도 편안함을 느낀다.",f:2},
+ {t:"문화가 다른 학생·학부모와의 상호작용에서 성급히 판단하지 않고 판단을 미루는 편이다.",f:0},
+ {t:"이주배경 학생·학부모를 대하는 일이 자주 나를 지치거나 낙담하게 한다.",f:3,r:1},
+ {t:"나는 문화적 배경이 다른 학생·학부모에게 열린 마음을 갖고 있다.",f:0},
+ {t:"이주배경 학생·학부모와 상호작용할 때 상대를 주의 깊게 관찰하는 편이다.",f:4},
+ {t:"이주배경 학생·학부모와의 상호작용에서 내가 쓸모없다고 느껴질 때가 많다.",f:3,r:1},
+ {t:"나와 다른 문화를 지닌 학생·학부모 사이의 차이를 존중한다.",f:1},
+ {t:"이주배경 학생·학부모와 상호작용하는 동안 되도록 많은 정보를 얻으려 노력한다.",f:4},
+ {t:"문화적 배경이 다른 학부모의 의견은 잘 받아들이기 어렵다.",f:1,r:1},
+ {t:"이주배경 학생의 말과 표정에 담긴 미묘한 의미에 민감한 편이다.",f:4},
+ {t:"한국 문화가 학생들의 출신 문화보다 낫다고 생각한다.",f:1,r:1},
+ {t:"이주배경 학생·학부모와의 상호작용에서 자주 긍정적으로 반응해 준다.",f:0},
+ {t:"이주배경 학생 상담이나 학부모 면담 같은 문화 간 상황을 피하고 싶다.",f:0,r:1},
+ {t:"이주배경 학생·학부모에게 말이나 표정으로 '이해하고 있음'을 자주 표현해 준다.",f:0},
+ {t:"나와 학생·학부모 사이의 문화적 차이를 흥미롭게 즐기는 편이다.",f:0}
+];
+const ISSF=["상호작용 참여","문화 차이 존중","상호작용 자신감","상호작용 향유","상호작용 주의"];
+// CQS 20 (연수용 번안). f: 0메타인지,1인지,2동기,3행동. 역채점 없음. 7점.
+const CQ=[
+ {t:"문화적 배경이 다른 학생·학부모와 상호작용할 때, 내가 어떤 문화적 전제(가정)를 쓰고 있는지 의식한다.",f:0},
+ {t:"이주배경 학생을 지도할 때 상황에 맞게 나의 문화적 지식을 조정한다.",f:0},
+ {t:"수업·상담에 적용하는 나의 문화적 지식이 맞는지 스스로 점검한다.",f:0},
+ {t:"학생·학부모와의 상호작용에서 내 판단이 틀렸음을 알아차리면 이를 수정한다.",f:0},
+ {t:"우리 학교 학생들의 출신 문화권의 교육 제도와 학교 문화를 알고 있다.",f:1},
+ {t:"학생들의 모어(베트남어·중국어·러시아어 등)의 기본 특징(호칭·인사말 등)을 알고 있다.",f:1},
+ {t:"학생들의 출신 문화권의 가치관과 종교적 신념을 알고 있다.",f:1},
+ {t:"학생들의 출신 문화권의 가족 제도와 부모–자녀 관계 문화를 알고 있다.",f:1},
+ {t:"학생들의 출신 문화권의 명절·음식·예술 등 생활문화를 알고 있다.",f:1},
+ {t:"학생들의 출신 문화권에서 비언어 행동(시선·몸짓·침묵)이 갖는 의미를 알고 있다.",f:1},
+ {t:"이주배경 학생·학부모와 상호작용하는 것을 즐긴다.",f:2},
+ {t:"문화적으로 낯선 학생·학부모를 대하는 일을 잘 해낼 자신이 있다.",f:2},
+ {t:"문화적으로 다양한 학급을 맡으면서 생기는 스트레스를 감당할 수 있다.",f:2},
+ {t:"문화적으로 다양한 학급을 맡는 것이 부담보다는 기회로 느껴진다.",f:2},
+ {t:"이주배경 학부모 상담 등 낯선 소통 상황에 적응할 자신이 있다.",f:2},
+ {t:"학생의 한국어 숙달도에 맞춰 말의 속도와 억양을 바꾼다.",f:3},
+ {t:"상황에 따라 침묵을 허용하거나 말의 양을 조절한다.",f:3},
+ {t:"문화 간 상황이 요구할 때 표정 등 비언어 행동을 조절한다.",f:3},
+ {t:"상대의 문화적 관습에 맞게 몸짓(손짓·거리 두기)을 조절한다.",f:3},
+ {t:"학생·학부모가 이해할 수 있도록 어휘 선택 등 언어적 행동을 바꾼다.",f:3}
+];
+const CQF=["메타인지 CQ","인지 CQ","동기 CQ","행동 CQ"];
+
+function render(list,root,pts,prefix){
+ const el=document.getElementById(root);
+ list.forEach((it,i)=>{
+  let opts='';
+  for(let v=1;v<=pts;v++){opts+=`<label><input type="radio" name="${prefix}${i}" value="${v}" onchange="prog()"><span>${v}</span></label>`;}
+  el.insertAdjacentHTML('beforeend',`<div class="q" id="${prefix}q${i}"><div class="qt">${prefix==='i'?i+1:i+25}. ${it.t}${it.r?'<span class="rv">(역채점)</span>':''}</div><div class="opts">${opts}</div></div>`);
+ });
+}
+render(ISS,'issItems',5,'i');
+render(CQ,'cqItems',7,'c');
+
+function answered(){let n=0;ISS.forEach((_,i)=>{if(document.querySelector(`input[name=i${i}]:checked`))n++});CQ.forEach((_,i)=>{if(document.querySelector(`input[name=c${i}]:checked`))n++});return n;}
+function prog(){const n=answered();document.getElementById('ptxt').textContent=`응답 ${n} / 44`;document.getElementById('pbar').style.width=(n/44*100)+'%';}
+
+function bandISS(m){return m<2.5?["출발선","#8A7B66","문화 간 상황이 아직 불편할 수 있습니다. 결핍이 아니라 경험의 부족 — 텍스트 속 인물과의 만남 같은 안전한 저강도 접촉부터가 정확한 처방입니다."]:m<3.5?["성장 중","#8A6A1F","존중의 태도에 비해 참여·자신감이 낮은 경우가 많은 구간입니다. 총점보다 아래 요인 막대에서 가장 낮은 것을 확인하세요."]:m<4.25?["민감","#23456E","차이를 알아차리고 존중하며 참여하는 안정적 감수성입니다. 다음 과제는 개인의 감수성을 수업 설계로 번역하는 일(3부)."]:["가교","#3F6B4F","매우 높은 자기 평가입니다. 자기보고의 상한·바람직성 편향도 한 번 점검해 보시고, 동료의 성장을 돕는 역할을 권합니다."];}
+function bandCQ(m){return m<3.5?["기초 형성기","#8A7B66","해당 자원이 아직 얇은 상태입니다. 특히 인지 CQ가 낮다면 '지식'은 가장 채우기 쉬운 결핍입니다."]:m<5?["발달기","#8A6A1F","상황에 따라 되기도, 안 되기도 하는 구간입니다. 최저 요인에 자원을 집중하는 것이 효율적입니다."]:m<6?["안정기","#23456E","다수 상황에서 문화지능이 작동합니다. 남은 과제는 피로·갈등 상황에서도 유지되는가입니다."]:["숙련","#3F6B4F","매우 높은 자기 평가 — 상한·바람직성 편향 점검을 함께 권합니다."];}
+function profISS(f){ // f: factor means
+ const min=f.indexOf(Math.min(...f));
+ const tips=["'참여'가 낮습니다 — 낮은 위험의 실천(이주배경 학생과 1:1 대화 루틴, 모어 인사 배우기)부터.","'존중'이 낮게 나왔습니다 — 역채점 문항 응답을 다시 보고, 판단 유보(2부 최소화 논의)와 연결해 성찰해 보세요.","'자신감'이 낮습니다 — 가장 흔하고 가장 빨리 좋아지는 유형. 자신감은 성공 경험의 함수입니다.","'향유'가 낮습니다 — 의무감이 앞선 상태일 수 있습니다. 음식·음악·이야기 등 내가 실제로 좋아할 접점에서 다시 출발하세요.","'주의'가 낮습니다 — 반응하기 전에 한 번 더 묻기, 침묵의 의미 관찰하기 같은 판단 유보 훈련이 처방입니다."];
+ return `가장 낮은 요인: <b>${ISSF[min]}</b>. ${tips[min]}`;
+}
+function profCQ(f){
+ const min=f.indexOf(Math.min(...f));
+ const tips=["'메타인지'가 낮습니다 — 경험이 편향을 굳히기 전에 성찰 루프(AIE式 기록, 3부 활동지 ②)를 다세요.","'인지'가 낮습니다 — 가장 채우기 쉬운 결핍입니다. 우리 반 학생 출신 문화권의 기초 지식부터 체계적으로.","'동기'가 낮습니다 — 억지 접촉보다, 부담 없는 즐거운 접점(음식·음악)에서 내적 동력을 회복하세요.","'행동'이 낮습니다 — 말 속도·어휘·표정 조정 같은 미시 행동을 하나씩 의식적으로 연습하세요. 행동 CQ는 연습의 함수입니다."];
+ return `가장 낮은 요인: <b>${CQF[min]}</b>. ${tips[min]}`;
+}
+function bars(root,names,means,max,cls){
+ const el=document.getElementById(root);el.innerHTML='';
+ names.forEach((n,i)=>{el.insertAdjacentHTML('beforeend',`<div class="fb ${cls}"><div class="fl"><span>${n}</span><b>${means[i].toFixed(2)}</b></div><div class="tr"><div class="fi" style="width:${means[i]/max*100}%"></div></div></div>`);});
+}
+function score(){
+ if(answered()<44){document.getElementById('err').style.display='block';
+  // highlight first missing
+  for(let i=0;i<24;i++){const el=document.getElementById('iq'+i);el.style.border=document.querySelector(`input[name=i${i}]:checked`)?'':'1.5px solid var(--verm)';el.style.borderRadius='6px';el.style.padding='11px 6px 9px';}
+  for(let i=0;i<20;i++){const el=document.getElementById('cq'+i);el.style.border=document.querySelector(`input[name=c${i}]:checked`)?'':'1.5px solid var(--verm)';el.style.borderRadius='6px';el.style.padding='11px 6px 9px';}
+  return;}
+ document.getElementById('err').style.display='none';
+ // ISS
+ const fs=[[],[],[],[],[]];
+ ISS.forEach((it,i)=>{let v=+document.querySelector(`input[name=i${i}]:checked`).value;if(it.r)v=6-v;fs[it.f].push(v);});
+ const im=fs.map(a=>a.reduce((x,y)=>x+y,0)/a.length);
+ const iAll=ISS.map((it,i)=>{let v=+document.querySelector(`input[name=i${i}]:checked`).value;return it.r?6-v:v;}).reduce((x,y)=>x+y,0)/24;
+ // CQS
+ const cs=[[],[],[],[]];
+ CQ.forEach((it,i)=>{const v=+document.querySelector(`input[name=c${i}]:checked`).value;cs[it.f].push(v);});
+ const cm=cs.map(a=>a.reduce((x,y)=>x+y,0)/a.length);
+ const cAll=CQ.map((it,i)=>+document.querySelector(`input[name=c${i}]:checked`).value).reduce((x,y)=>x+y,0)/20;
+ // render
+ const bi=bandISS(iAll),bc=bandCQ(cAll);
+ document.getElementById('issM').textContent=iAll.toFixed(2);
+ document.getElementById('issG').textContent=bi[0];document.getElementById('issG').style.background=bi[1]+'22';document.getElementById('issG').style.color=bi[1];
+ bars('issBars',ISSF,im,5,'');
+ document.getElementById('issExpl').innerHTML=`<b>${bi[0]}</b> — ${bi[2]}<br><br>${profISS(im)}`;
+ document.getElementById('cqM').textContent=cAll.toFixed(2);
+ document.getElementById('cqG').textContent=bc[0];document.getElementById('cqG').style.background=bc[1]+'22';document.getElementById('cqG').style.color=bc[1];
+ bars('cqBars',CQF,cm,7,'cq');
+ document.getElementById('cqExpl').innerHTML=`<b>${bc[0]}</b> — ${bc[2]}<br><br>${profCQ(cm)}`;
+ // quadrant
+ const hi=iAll>=3.5,hc=cAll>=5.0;
+ const q=hi&&hc?["상호문화 실천가","감수성과 역량이 함께 높습니다. 다음 걸음: 수업 설계로의 번역(3부)과 동료 성장 지원."]:
+   hi&&!hc?["따뜻한 초심자","감수성은 높으나 지식·기술이 아직 얇습니다. 다음 걸음: 인지·행동 CQ의 의도적 보충."]:
+   !hi&&hc?["기술적 접촉가","역량은 갖췄으나 마음의 온도가 낮게 나왔습니다. 다음 걸음: 태도의 성찰(2부 DMIS와 최소화의 함정)."]:
+   ["출발선의 동료","가장 정직한 자리입니다. 다음 걸음: 안전한 저강도 만남(문학 속 인물과의 만남)의 설계."];
+ document.getElementById('quad').innerHTML=`<b>${q[0]}</b> (ISS ${iAll.toFixed(2)} × CQS ${cAll.toFixed(2)})<br>${q[1]}`;
+ // code: I:overall|f1-f2-f3-f4-f5/C:overall|f1-f2-f3-f4
+ const code=`I${iAll.toFixed(2)}|${im.map(x=>x.toFixed(1)).join('-')}/C${cAll.toFixed(2)}|${cm.map(x=>x.toFixed(1)).join('-')}`;
+ document.getElementById('code').textContent=code;
+ if(SUBMIT_URL) document.getElementById('submitBtn').style.display='block';
+ try{ if(navigator.clipboard){navigator.clipboard.writeText(code).then(()=>{document.getElementById('copied').style.display='block';}).catch(()=>{});} }catch(e){}
+ document.getElementById('result').style.display='block';
+ document.getElementById('f').style.display='none';
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function submitCode(){
+ const c=document.getElementById('code').textContent;
+ if(SUBMIT_URL.includes('CODE')){
+  window.open(SUBMIT_URL.replace('CODE',encodeURIComponent(c)),'_blank');
+ }else{
+  const go=()=>{alert('결과 코드가 복사되었습니다.\n열리는 폼의 답란에 붙여넣고 [제출]을 눌러 주세요.');window.open(SUBMIT_URL,'_blank');};
+  if(navigator.clipboard){navigator.clipboard.writeText(c).then(go).catch(go);}
+  else{const ta=document.createElement('textarea');ta.value=c;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();go();}
+ }
+}
+function copyCode(){
+ const c=document.getElementById('code').textContent;
+ if(navigator.clipboard){navigator.clipboard.writeText(c).then(()=>alert('복사되었습니다. 수합 채널에 붙여넣어 주세요.'));}
+ else{const ta=document.createElement('textarea');ta.value=c;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();alert('복사되었습니다.');}
+}
+</script>
+</body>
+</html>

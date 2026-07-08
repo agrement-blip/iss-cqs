@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>강의자용 실시간 분석 대시보드 — ISS·CQS 집단 결과</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--indigo:#23456E;--deep:#152A45;--soft:#E8EDF4;--paper:#FBFAF5;--ink:#22303C;--muted:#6B7480;--line:#DAD6CB;--verm:#AE4A2F;--green:#3F6B4F;--amber:#8A6A1F}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;font-size:15px}
+.wrap{max-width:1080px;margin:0 auto;padding:26px 24px 80px}
+h1{font-size:24px;color:var(--deep);font-weight:800;margin-bottom:4px}
+.sub{font-size:13.5px;color:var(--muted);margin-bottom:20px}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:18px}
+.card h2{font-size:16.5px;color:var(--indigo);margin-bottom:8px}
+textarea{width:100%;height:220px;border:1.5px solid var(--line);border-radius:8px;padding:10px;font-family:ui-monospace,Menlo,monospace;font-size:12.5px;resize:vertical}
+button{background:var(--indigo);color:#fff;border:0;border-radius:8px;padding:11px 18px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px}
+input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px;font-size:14px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--soft);border-radius:8px;padding:12px;text-align:center}
+.kpi .v{font-size:26px;font-weight:800;color:var(--indigo)}
+.kpi .l{font-size:12px;color:var(--muted)}
+.hrow{display:flex;align-items:flex-end;gap:6px;height:150px;border-bottom:2px solid var(--line);padding:0 4px}
+.hcol{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}
+.hbar{width:100%;background:var(--indigo);border-radius:4px 4px 0 0;min-height:2px;transition:height .3s}
+.hbar.g{background:var(--green)}
+.hlab{font-size:10.5px;color:var(--muted)}
+.hcnt{font-size:11px;font-weight:700;color:var(--deep)}
+.fb{margin:7px 0}
+.fb .fl{display:flex;justify-content:space-between;font-size:13px}
+.fb .tr{height:13px;background:#EFECE3;border-radius:6px;overflow:hidden}
+.fb .fi{height:100%;background:var(--indigo)}
+.fb.g .fi{background:var(--green)}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.qcell{border:1px solid var(--line);border-radius:8px;padding:12px;text-align:center}
+.qcell .n{font-size:24px;font-weight:800}
+.qcell .t{font-size:12px;color:var(--muted)}
+.small{font-size:12px;color:var(--muted);margin-top:8px}
+#qrbox{display:flex;justify-content:center;padding:14px 0}
+.err{color:var(--verm);font-size:13px;font-weight:700}
+.min{background:#F7EFEA;border-left:4px solid var(--verm);padding:10px 14px;font-size:13.5px;border-radius:0 8px 8px 0;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>실시간 분석 대시보드 <span style="font-size:14px;font-weight:400;color:var(--muted)">— ISS · CQS 집단 결과 (강의자용)</span></h1>
+<p class="sub">연수생들이 제출한 결과 코드를 왼쪽에 붙여넣고 [분석]을 누르면 즉시 집단 분포가 그려집니다. 모든 계산은 이 브라우저 안에서만 이루어집니다.</p>
+
+<div class="grid">
+<div>
+  <div class="card">
+    <h2>① 결과 코드 붙여넣기</h2>
+    <p style="font-size:12.5px;color:var(--muted)">한 줄에 하나씩. 예:<br><code style="font-size:11.5px">I3.42|3.6-3.8-2.9-3.4-3.5/C4.75|5.0-3.9-5.4-4.8</code><br>다른 텍스트가 섞여 있어도 코드만 자동 추출합니다.</p>
+    <textarea id="ta" placeholder="여기에 수합 채널의 내용을 통째로 붙여넣으세요."></textarea>
+    <button onclick="run()">분석</button>
+    <p class="small" id="parseInfo"></p>
+  </div>
+  <div class="card">
+    <h2>QR 생성기</h2>
+    <p style="font-size:12.5px;color:var(--muted)">자가진단 웹앱을 올린 주소(URL)를 입력하면 연수생 배부용 QR이 생성됩니다.</p>
+    <input type="text" id="url" placeholder="https:// 로 시작하는 웹앱 주소">
+    <button onclick="makeQR()">QR 만들기</button>
+    <div id="qrbox"></div>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <h2>② 집단 요약</h2>
+    <div class="kpis">
+      <div class="kpi"><div class="v" id="kN">–</div><div class="l">응답자 수</div></div>
+      <div class="kpi"><div class="v" id="kI">–</div><div class="l">ISS 평균 (SD)</div></div>
+      <div class="kpi"><div class="v" id="kC">–</div><div class="l">CQS 평균 (SD)</div></div>
+    </div>
+    <div class="min" id="minMsg" style="display:none"></div>
+  </div>
+  <div class="card">
+    <h2>③ ISS 전체 평균 분포 <span style="font-size:12px;color:var(--muted)">(1.0–5.0, 0.5 간격)</span></h2>
+    <div class="hrow" id="hI"></div>
+  </div>
+  <div class="card">
+    <h2>④ CQS 전체 평균 분포 <span style="font-size:12px;color:var(--muted)">(1.0–7.0, 0.75 간격)</span></h2>
+    <div class="hrow" id="hC"></div>
+  </div>
+  <div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+    <div><h2>⑤ ISS 요인별 평균 <span style="font-size:12px;color:var(--muted)">/5</span></h2><div id="fI"></div></div>
+    <div><h2>⑥ CQS 요인별 평균 <span style="font-size:12px;color:var(--muted)">/7</span></h2><div id="fC"></div></div>
+  </div>
+  <div class="card">
+    <h2>⑦ 좌표 사분면 인원 <span style="font-size:12px;color:var(--muted)">(ISS 3.5 · CQS 5.0 기준)</span></h2>
+    <div class="qgrid">
+      <div class="qcell"><div class="n" style="color:var(--indigo)" id="q10">–</div><div class="t">기술적 접촉가<br>(ISS↓ CQS↑)</div></div>
+      <div class="qcell"><div class="n" style="color:var(--green)" id="q11">–</div><div class="t">상호문화 실천가<br>(ISS↑ CQS↑)</div></div>
+      <div class="qcell"><div class="n" style="color:var(--amber)" id="q00">–</div><div class="t">출발선의 동료<br>(ISS↓ CQS↓)</div></div>
+      <div class="qcell"><div class="n" style="color:var(--verm)" id="q01">–</div><div class="t">따뜻한 초심자<br>(ISS↑ CQS↓)</div></div>
+    </div>
+    <p class="small">진행 멘트 예: "우리 연수단의 무게중심은 ___ 사분면입니다. 오늘 2·3부는 정확히 그 다음 걸음을 다룹니다." ※ 개인 호명·서열화 금지 — 분포와 평균만 다룹니다.</p>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+const ISSF=["참여","존중","자신감","향유","주의"],CQF=["메타인지","인지","동기","행동"];
+const rx=/I(\d\.\d{1,2})\|(\d\.\d)-(\d\.\d)-(\d\.\d)-(\d\.\d)-(\d\.\d)\/C(\d\.\d{1,2})\|(\d\.\d)-(\d\.\d)-(\d\.\d)-(\d\.\d)/g;
+function mean(a){return a.reduce((x,y)=>x+y,0)/a.length}
+function sd(a){const m=mean(a);return Math.sqrt(mean(a.map(x=>(x-m)*(x-m))))}
+function run(){
+ const txt=document.getElementById('ta').value;let m,rows=[];
+ rx.lastIndex=0;
+ while((m=rx.exec(txt))!==null){rows.push({i:+m[1],ifs:[+m[2],+m[3],+m[4],+m[5],+m[6]],c:+m[7],cfs:[+m[8],+m[9],+m[10],+m[11]]});}
+ const info=document.getElementById('parseInfo');
+ if(!rows.length){info.innerHTML='<span class="err">코드를 찾지 못했습니다. 형식을 확인하세요.</span>';return;}
+ info.textContent=`코드 ${rows.length}건 인식됨`;
+ const iAll=rows.map(r=>r.i),cAll=rows.map(r=>r.c);
+ document.getElementById('kN').textContent=rows.length;
+ document.getElementById('kI').textContent=mean(iAll).toFixed(2)+' ('+sd(iAll).toFixed(2)+')';
+ document.getElementById('kC').textContent=mean(cAll).toFixed(2)+' ('+sd(cAll).toFixed(2)+')';
+ hist('hI',iAll,1,5,8,false); hist('hC',cAll,1,7,8,true);
+ fbars('fI',ISSF,[0,1,2,3,4].map(k=>mean(rows.map(r=>r.ifs[k]))),5,'');
+ fbars('fC',CQF,[0,1,2,3].map(k=>mean(rows.map(r=>r.cfs[k]))),7,'g');
+ // min factor message
+ const im=[0,1,2,3,4].map(k=>mean(rows.map(r=>r.ifs[k])));
+ const cm=[0,1,2,3].map(k=>mean(rows.map(r=>r.cfs[k])));
+ const imin=im.indexOf(Math.min(...im)),cmin=cm.indexOf(Math.min(...cm));
+ document.getElementById('minMsg').style.display='block';
+ document.getElementById('minMsg').innerHTML=`이 집단의 공통 최저 요인 — ISS: <b>${ISSF[imin]}</b> (${im[imin].toFixed(2)}) · CQS: <b>${CQF[cmin]}</b> (${cm[cmin].toFixed(2)}). 이 두 요인을 2·3부 내용과 연결해 예고하세요.`;
+ // quadrants
+ let q={"00":0,"01":0,"10":0,"11":0};
+ rows.forEach(r=>{const a=r.i>=3.5?1:0,b=r.c>=5?1:0;q[""+a+b]++;});
+ document.getElementById('q11').textContent=q["11"];document.getElementById('q10').textContent=q["01"];
+ document.getElementById('q01').textContent=q["10"];document.getElementById('q00').textContent=q["00"];
+}
+function hist(root,data,lo,hi,bins,g){
+ const el=document.getElementById(root);el.innerHTML='';
+ const w=(hi-lo)/bins,cnt=Array(bins).fill(0);
+ data.forEach(v=>{let b=Math.min(bins-1,Math.floor((v-lo)/w));cnt[b]++;});
+ const mx=Math.max(...cnt,1);
+ for(let b=0;b<bins;b++){
+  el.insertAdjacentHTML('beforeend',`<div class="hcol"><div class="hcnt">${cnt[b]||''}</div><div class="hbar ${g?'g':''}" style="height:${cnt[b]/mx*110}px"></div><div class="hlab">${(lo+b*w).toFixed(1)}–${(lo+(b+1)*w).toFixed(1)}</div></div>`);
+ }
+}
+function fbars(root,names,means,max,cls){
+ const el=document.getElementById(root);el.innerHTML='';
+ names.forEach((n,i)=>{el.insertAdjacentHTML('beforeend',`<div class="fb ${cls}"><div class="fl"><span>${n}</span><b>${means[i].toFixed(2)}</b></div><div class="tr"><div class="fi" style="width:${means[i]/max*100}%"></div></div></div>`);});
+}
+function makeQR(){
+ const u=document.getElementById('url').value.trim();
+ if(!/^https?:\/\//.test(u)){alert('https:// 로 시작하는 주소를 입력하세요.');return;}
+ const box=document.getElementById('qrbox');box.innerHTML='';
+ new QRCode(box,{text:u,width:190,height:190,colorDark:"#152A45",colorLight:"#ffffff"});
+}
+</script>
+</body>
+</html>
